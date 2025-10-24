@@ -30,9 +30,9 @@ function prompt_first_line() {
   local spacing=$((COLUMNS - left_len - right_len))
 
   if [[ $spacing -gt 0 && -n $right_plain ]]; then
-    printf "%s%${spacing}s%s\n " "$left" "" "$right"
+    printf "%s%${spacing}s%s\n%(?:%{$fg_bold[green]%}➜ :%{$fg_bold[red]%}➜ )%{$reset_color%}" "$left" "" "$right"
   else
-    printf "%s\n " "$left"
+    printf "%s\n%(?:%{$fg_bold[green]%}➜ :%{$fg_bold[red]%}➜ )%{$reset_color%}" "$left"
   fi
 }
 
