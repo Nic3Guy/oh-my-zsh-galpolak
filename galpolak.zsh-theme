@@ -17,7 +17,7 @@ setopt prompt_subst
 # Function to render the first line with git on the right
 function prompt_first_line() {
   local left="%(?:%{$fg_bold[green]%}➜ :%{$fg_bold[red]%}➜ ) %{$fg[cyan]%}%c%{$reset_color%}"
-  local right="$(git_prompt_info)$(git_modified_files_count)"
+  local right="$(_omz_git_prompt_info)$(git_modified_files_count)"
 
   # Strip color codes to calculate actual string length
   local left_plain="${(S%%)left//\%\{*\%\}}"
@@ -30,10 +30,22 @@ function prompt_first_line() {
   local spacing=$((COLUMNS - left_len - right_len))
 
   if [[ $spacing -gt 0 && -n $right_plain ]]; then
-    printf "%s%${spacing}s%s\n" "$left" "" "$right"
+    printf "%s%${spacing}s%s\n " "$left" "" "$right"
   else
-    printf "%s\n" "$left"
+    printf "%s\n " "$left"
   fi
+}
+
+# Hook function to display divider after command execution
+function precmd() {
+  # Draw a cyan horizontal line
+  print -P "%{$fg[cyan]%}${(l:$COLUMNS::⎯:)}%{$reset_color%}"
+}
+
+# Hook function to display divider before command output
+function preexec() {
+  # Draw a light grey horizontal line before command output (using bright black/grey)
+  print -P "%{$fg_bold[black]%}${(l:$COLUMNS::⎯:)}%{$reset_color%}"
 }
 
 # Main prompt
