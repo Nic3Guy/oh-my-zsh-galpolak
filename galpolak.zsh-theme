@@ -16,7 +16,17 @@ setopt prompt_subst
 
 # Function to render the first line with git on the right
 function prompt_first_line() {
-  local left="%(?:%{$fg_bold[green]%}➜ :%{$fg_bold[red]%}➜ ) %{$fg[cyan]%}%c%{$reset_color%}"
+  # Capture exit status early before it changes
+  local exit_status=$?
+
+  local arrow_color
+  if [[ $exit_status -eq 0 ]]; then
+    arrow_color="%{$fg_bold[green]%}"
+  else
+    arrow_color="%{$fg_bold[red]%}"
+  fi
+
+  local left="${arrow_color}➜ %{$reset_color%}%{$fg[cyan]%}%c%{$reset_color%}"
   local right="$(_omz_git_prompt_info)$(git_modified_files_count)"
 
   # Strip color codes to calculate actual string length
@@ -29,10 +39,14 @@ function prompt_first_line() {
   # Calculate spacing
   local spacing=$((COLUMNS - left_len - right_len))
 
+  local second_line_arrow="${arrow_color}➜ %{$reset_color%}"
+
   if [[ $spacing -gt 0 && -n $right_plain ]]; then
-    printf "%s%${spacing}s%s\n%(?:%{$fg_bold[green]%}➜ :%{$fg_bold[red]%}➜ )%{$reset_color%}" "$left" "" "$right"
+    print -P "${left}${(l:${spacing}:: :)}${right}"
+    print -P "${second_line_arrow}"
   else
-    printf "%s\n%(?:%{$fg_bold[green]%}➜ :%{$fg_bold[red]%}➜ )%{$reset_color%}" "$left"
+    print -P "${left}"
+    print -P "${second_line_arrow}"
   fi
 }
 
