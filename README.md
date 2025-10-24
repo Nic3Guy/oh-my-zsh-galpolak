@@ -4,7 +4,10 @@ A custom Oh My Zsh theme based on robbyrussell with enhanced git information, mu
 
 ## Features
 
-- **Multi-line prompt with arrows**: Command input on a separate line with status-colored arrows (green for success, red for failure)
+- **Multi-line prompt with dual arrows**: 
+  - First line shows directory and git info
+  - Second line shows arrow for command input
+  - Both arrows share the same color based on last command status (green for success, red for failure)
 - **Git branch on the right**: Branch name aligned to the right side of the terminal
 - **Modified files count**: Shows the number of modified files in yellow brackets `[3]`
 - **Visual separators**: Clean dividers between prompts and command outputs
@@ -12,8 +15,8 @@ A custom Oh My Zsh theme based on robbyrussell with enhanced git information, mu
   - Grey dividers before command outputs
   - Uses technical line character (⎯) for a modern look
 - **Visual indicators**:
-  - Green arrow `➜` when last command succeeds
-  - Red arrow `➜` when last command fails
+  - Green arrows `➜` when last command succeeds
+  - Red arrows `➜` when last command fails (both lines turn red)
   - Yellow pencil `✎` when git repository has uncommitted changes
   - Current directory in cyan
 
@@ -25,6 +28,9 @@ A custom Oh My Zsh theme based on robbyrussell with enhanced git information, mu
 ➜ ls
 ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
 file1.txt    file2.txt    directory/
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+➜  riverpool                                        git:(branch-name)[3] ✎
+➜ 
 ```
 
 ## Installation
@@ -59,6 +65,7 @@ You can modify the theme file to customize:
 - Uses `_omz_git_prompt_info` for synchronous git information display
 - Implements `precmd` hook for dividers before prompts
 - Implements `preexec` hook for dividers before command outputs
+- Captures exit status early to ensure both arrows have matching colors
 - Dynamically calculates spacing to align git info to the right
 - Automatically adjusts to terminal width
 
