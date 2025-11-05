@@ -16,17 +16,7 @@ setopt prompt_subst
 
 # Function to render the first line with git on the right
 function prompt_first_line() {
-  # Capture exit status early before it changes
-  local exit_status=$?
-
-  local arrow_color
-  if [[ $exit_status -eq 0 ]]; then
-    arrow_color="%{$fg_bold[green]%}"
-  else
-    arrow_color="%{$fg_bold[red]%}"
-  fi
-
-  local left="${arrow_color}➜ %{$reset_color%}%{$fg[cyan]%}%c%{$reset_color%}"
+  local left="%(?:%{$fg_bold[green]%}➜ :%{$fg_bold[red]%}➜ )%{$reset_color%}%{$fg[cyan]%}%c%{$reset_color%}"
   local right="$(_omz_git_prompt_info)$(git_modified_files_count)"
 
   # Strip color codes to calculate actual string length
@@ -39,31 +29,33 @@ function prompt_first_line() {
   # Calculate spacing
   local spacing=$((COLUMNS - left_len - right_len))
 
-  local second_line_arrow="${arrow_color}➜ %{$reset_color%}"
-
   if [[ $spacing -gt 0 && -n $right_plain ]]; then
-    print -P "${left}${(l:${spacing}:: :)}${right}"
-    print -P "${second_line_arrow}"
+    echo "${left}${(l:${spacing}:: :)}${right}"
   else
-    print -P "${left}"
-    print -P "${second_line_arrow}"
+    echo "${left}"
   fi
 }
 
 # Hook function to display divider after command execution
-function precmd() {
+function galpolak_precmd() {
   # Draw a cyan horizontal line
-  print -P "%{$fg[cyan]%}${(l:$COLUMNS::⎯:)}%{$reset_color%}"
+  print -P "%{$fg[cyan]%}${(l:$COLUMNS::┄:)}%{$reset_color%}"
 }
 
-# Hook function to display divider before command output
-function preexec() {
-  # Draw a light grey horizontal line before command output (using bright black/grey)
-  print -P "%{$fg_bold[black]%}${(l:$COLUMNS::⎯:)}%{$reset_color%}"
+# Hook function to add spacing after command input
+function galpolak_preexec() {
+  # Add a blank line after command input
+  print ""
 }
 
-# Main prompt
-PROMPT='$(prompt_first_line)'
+# Add hooks using Oh My Zsh's hook system
+autoload -U add-zsh-hook
+add-zsh-hook precmd galpolak_precmd
+add-zsh-hook preexec galpolak_preexec
+
+# Main prompt - two lines with git info on first line
+PROMPT='$(prompt_first_line)
+%(?:%{$fg_bold[green]%}➜ :%{$fg_bold[red]%}➜ )%{$reset_color%}'
 
 # Clear right prompt
 RPROMPT=''
